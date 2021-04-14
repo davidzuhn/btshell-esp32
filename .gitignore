@@ -1,0 +1,14 @@
+build
+sdkconfig
+sdkconfig.old
+
+MANIFEST
+
+*.orig
+*.rej
+*.zip
+
+# emacs stuff
+
+\#.*\#
+*~

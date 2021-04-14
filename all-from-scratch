@@ -1,0 +1,21 @@
+#!/bin/sh
+
+if [ -z "$IDF_PATH" ]
+then
+    echo "Must set IDF_PATH" 1>&2
+    exit 1
+fi
+
+set -e
+
+rm -rf build sdkconfig
+
+idf.py set-target esp32c3
+
+idf.py fullclean
+idf.py build
+
+if [ -n "$ESPPORT" ]
+then
+    idf.py flash monitor
+fi
