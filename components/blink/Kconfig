@@ -44,7 +44,7 @@ menu "Visible LED Configuration"
         int "Blink period in ms"
         range 10 3600000
         default 1000 if BLINK_LED_GPIO
-	default 100 if BLINK_LED_RMT
+	default 500 if BLINK_LED_RMT
         help
             Define the default blinking period in milliseconds.
 
