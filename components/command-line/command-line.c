@@ -155,6 +155,8 @@ void initialize_command_line()
                 CONFIG_COMMAND_LINE_STACK_SIZE, NULL,
                 CONFIG_COMMAND_LINE_TASK_PRIORITY, NULL);
 
+    esp_console_register_help_command();
+
     ESP_LOGI(TAG, "initialized");
 }
 
