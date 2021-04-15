@@ -14,6 +14,7 @@
 #include "esp_spi_flash.h"
 
 #include "blink.h"
+#include "command-line.h"
 
 void print_chip_info()
 {
@@ -38,9 +39,12 @@ void print_chip_info()
 
 void app_main(void)
 {
+    /* Initialize everything */
     initialize_blink();
+    initialize_command_line();
 
+    /* Run the main application */
     print_chip_info();
 
-    /* keeps running forever, since the blink task never exits */
+    /* this function exits, but the program keeps running forever, since the other tasks never exit */
 }

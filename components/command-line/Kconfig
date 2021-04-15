@@ -1,0 +1,25 @@
+menu "Command Line Interpreter"
+
+    config COMMAND_LINE_ENABLED
+        bool "Enable command line"
+	default y
+	help
+	    Enable the command line interpreter
+
+    config COMMAND_LINE_TASK_PRIORITY
+        depends on COMMAND_LINE_ENABLED
+        int "Command Line Task Priority Value"
+        range 0 32
+        default 5
+        help
+            Task priority value of the command line interpreter (0 is lowest)
+
+    config COMMAND_LINE_STACK_SIZE
+        depends on COMMAND_LINE_ENABLED
+        hex "Command Line Task Stack Size"
+        default 0x4000
+        help
+            Stack size for the command line interpreter, must account for the work done by
+	    any/all of the individual commands that might be implemented.
+
+endmenu
