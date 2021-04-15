@@ -17,9 +17,11 @@
 
 #include "sdkconfig.h"
 
+static const char *TAG = "blink";
+
+/* None of this will be compiled in at all if no blink LED is configured */
 #ifndef CONFIG_BLINK_LED_NONE
 
-static const char *TAG = "blink";
 
 /* Use project configuration menu (idf.py menuconfig) to choose the GPIO to blink,
    or you can edit the following line and set a number here.
@@ -50,7 +52,7 @@ static void blink_led(void)
 
 static void configure_led(void)
 {
-    ESP_LOGI(TAG, "Example configured to blink addressable LED!");
+    ESP_LOGI(TAG, "Example configured to blink addressable LED every %d ms", CONFIG_BLINK_PERIOD);
     /* LED strip initialization with the GPIO and pixels number*/
     pStrip = led_strip_init(CONFIG_BLINK_LED_RMT_CHANNEL, BLINK_GPIO, 1);
     /* Set all LED off to clear all pixels */
@@ -69,7 +71,7 @@ static void blink_led(void)
 
 static void configure_led(void)
 {
-    ESP_LOGI(TAG, "Example configured to blink GPIO LED!");
+    ESP_LOGI(TAG, "Example configured to blink LED on GPIO %d!", BLINK_GPIO);
     gpio_reset_pin(BLINK_GPIO);
     /* Set the GPIO as a push/pull output */
     gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
@@ -98,7 +100,5 @@ void initialize_blink()
     configure_led();
 
     xTaskCreate(run_blink_led, "blink", blink_stack_size, NULL, tskIDLE_PRIORITY, NULL);
-
-    ESP_LOGI(TAG, "initialized");
 #endif
 }
