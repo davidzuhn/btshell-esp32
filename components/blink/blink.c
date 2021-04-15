@@ -17,6 +17,8 @@
 
 #include "sdkconfig.h"
 
+#ifndef CONFIG_BLINK_LED_NONE
+
 static const char *TAG = "blink";
 
 /* Use project configuration menu (idf.py menuconfig) to choose the GPIO to blink,
@@ -87,10 +89,16 @@ static void run_blink_led()
     }
 }
 
+#endif /* BLINK_LED_NONE */
+
 void initialize_blink()
 {
+#ifndef CONFIG_BLINK_LED_NONE
     /* Configure the peripheral according to the LED type */
     configure_led();
 
     xTaskCreate(run_blink_led, "blink", blink_stack_size, NULL, tskIDLE_PRIORITY, NULL);
+
+    ESP_LOGI(TAG, "initialized");
+#endif
 }
