@@ -1,6 +1,11 @@
 idf_component_register(SRCS
 			 "cmd_btshell.c"
+			 "gatt_svr.c"
+			 "parse.c"
+			 "misc.c"
                        INCLUDE_DIRS
 		         "."
 		       REQUIRES
-		         bt console)
+		         "bt"
+			 "console"
+)

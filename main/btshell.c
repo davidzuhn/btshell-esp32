@@ -17,7 +17,6 @@
 
 #include "blink.h"
 #include "command-line.h"
-#include "bluetooth.h"
 
 #include "cmd_system.h"
 #include "cmd_btshell.h"
@@ -50,7 +49,8 @@ void app_main(void)
     /* Initialize everything */
     initialize_blink();
     initialize_command_line();
-    initialize_bluetooth();
+
+    initialize_btshell();
 
     register_system();
     register_btshell();

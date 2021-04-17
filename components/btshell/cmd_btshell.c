@@ -12,6 +12,15 @@
 
 #include "cmd_btshell.h"
 
+static const char* TAG = "btshell";
+
+
+void initialize_btshell()
+{
+    ESP_LOGI(TAG, "initialized");
+
+}
+
 
 void register_btshell()
 {
