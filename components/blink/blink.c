@@ -99,6 +99,6 @@ void initialize_blink()
     /* Configure the peripheral according to the LED type */
     configure_led();
 
-    xTaskCreate(run_blink_led, "blink", blink_stack_size, NULL, tskIDLE_PRIORITY, NULL);
+    xTaskCreate(run_blink_led, "blink", blink_stack_size, NULL, tskIDLE_PRIORITY+1, NULL);
 #endif
 }

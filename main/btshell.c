@@ -1,4 +1,6 @@
-/* Hello World Example
+/* Network Shell example/demonstration program
+
+   Allows manipulation of BLE & WiFi capabilities of the ESP32
 
    This example code is in the Public Domain (or CC0 licensed, at your option.)
 
@@ -15,6 +17,10 @@
 
 #include "blink.h"
 #include "command-line.h"
+#include "bluetooth.h"
+
+#include "cmd_system.h"
+#include "cmd_btshell.h"
 
 void print_chip_info()
 {
@@ -36,12 +42,18 @@ void print_chip_info()
 }
 
 
-
+#ifdef __cplusplus
+extern "C"
+#endif
 void app_main(void)
 {
     /* Initialize everything */
     initialize_blink();
     initialize_command_line();
+    initialize_bluetooth();
+
+    register_system();
+    register_btshell();
 
     /* Run the main application */
     print_chip_info();

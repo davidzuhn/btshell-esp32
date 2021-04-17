@@ -1,5 +1,7 @@
 #!/bin/sh
 
+TARGET=${ESP32_TARGET-esp32c3}
+
 if [ -z "$IDF_PATH" ]
 then
     echo "Must set IDF_PATH" 1>&2
@@ -10,7 +12,12 @@ set -e
 
 rm -rf build sdkconfig
 
-idf.py set-target esp32c3
+if [ -d sdkconfig.${TARGET} ]
+then
+    cp sdkconfig.${TARGET} sdkconfig.defaults
+fi
+
+idf.py set-target ${TARGET}
 
 idf.py fullclean
 idf.py build
