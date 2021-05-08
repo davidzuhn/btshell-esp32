@@ -17,12 +17,15 @@
  * under the License.
  */
 
-#pragma once
+#ifndef H_BTSHELL_PRIV_
+#define H_BTSHELL_PRIV_
 
 #include <inttypes.h>
-
+/*#include "os/mynewt.h" */
+#include "os/os.h"
 #include "nimble/ble.h"
 #include "nimble/nimble_opt.h"
+#include "modlog/modlog.h"
 
 #include "host/ble_gatt.h"
 #include "host/ble_gap.h"
@@ -203,6 +206,11 @@ int chr_is_empty(const struct btshell_svc *svc, const struct btshell_chr *chr);
 void print_conn_desc(const struct ble_gap_conn_desc *desc);
 void print_svc(struct btshell_svc *svc);
 
+/* added 20210503 */
+void initialize_btshell();
+
 #ifdef __cplusplus
 }
+#endif
+
 #endif

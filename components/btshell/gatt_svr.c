@@ -19,11 +19,13 @@
 
 #include <assert.h>
 #include <string.h>
-
+#if 0
+#include "bsp/bsp.h"
+#endif
+#include "console/console.h"
 #include "host/ble_hs.h"
 #include "host/ble_uuid.h"
 #include "host/ble_gatt.h"
-
 #include "btshell.h"
 
 /* 0000xxxx-8c26-476f-89a7-a108033a69c7 */
@@ -113,10 +115,6 @@ static int
 gatt_svr_long_access_test(uint16_t conn_handle, uint16_t attr_handle,
                                   struct ble_gatt_access_ctxt *ctxt,
                                   void *arg);
-
-/* ESP32 check field initializers by default, here (and only here) it's a pain */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 
 static const struct ble_gatt_svc_def gatt_svr_svcs[] = {
     {
@@ -306,8 +304,6 @@ static const struct ble_gatt_svc_def gatt_svr_inc_svcs[] = {
         0, /* No more services. */
     },
 };
-
-#pragma GCC diagnostic pop
 
 static int
 gatt_svr_chr_write(struct os_mbuf *om, uint16_t min_len, uint16_t max_len,

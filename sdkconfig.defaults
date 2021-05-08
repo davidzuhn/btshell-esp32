@@ -1,3 +1,4 @@
+# needed for the extended "tasks" command
 CONFIG_FREERTOS_GENERATE_RUN_TIME_STATS=y
 
 CONFIG_BT_ENABLED=y

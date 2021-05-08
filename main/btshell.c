@@ -19,7 +19,7 @@
 #include "command-line.h"
 
 #include "cmd_system.h"
-#include "cmd_btshell.h"
+#include "btshell.h"
 
 void print_chip_info()
 {
@@ -48,15 +48,27 @@ void app_main(void)
 {
     /* Initialize everything */
     initialize_blink();
+
+#if CONFIG_COMMAND_LINE_ENABLED
     initialize_command_line();
 
     initialize_btshell();
-
+#if 1
     register_system();
+#endif
+#if 0
     register_btshell();
+#endif
+#endif
+
 
     /* Run the main application */
     print_chip_info();
 
-    /* this function exits, but the program keeps running forever, since the other tasks never exit */
+    /* this function exits, but the program is intended to keep running
+     * forever, since the other tasks (if any) never exit
+     *
+     * If you're running this without the command line, this program is
+     * pretty useless and so it will immediately exit
+     */
 }

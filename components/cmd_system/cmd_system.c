@@ -248,14 +248,12 @@ static int tasks_info(int argc, char **argv)
         vPortFree( pxTaskStatusArray );
     }
 
-    size_t rtos_heap_size = xPortGetFreeHeapSize();
-    ESP_LOGI(TAG, "rtos heap size:     0x%08x (%7u)", rtos_heap_size, rtos_heap_size);
-
-    uint32_t min_heap_size = heap_caps_get_minimum_free_size(MALLOC_CAP_DEFAULT);
-    ESP_LOGI(TAG, "min heap size:      0x%08x (%7u)", min_heap_size, min_heap_size);
 
     size_t heap_size = esp_get_free_heap_size();
-    ESP_LOGI(TAG, "ESP heap size:      0x%08x (%7u)", heap_size, heap_size);
+    ESP_LOGI(TAG, "current heap size:  0x%08x (%7u)", heap_size, heap_size);
+
+    uint32_t min_heap_size = heap_caps_get_minimum_free_size(MALLOC_CAP_DEFAULT);
+    ESP_LOGI(TAG, "smallest heap size: 0x%08x (%7u)", min_heap_size, min_heap_size);
 
     size_t largest_block = heap_caps_get_largest_free_block(MALLOC_CAP_8BIT);
     ESP_LOGI(TAG, "largest free block: 0x%08x (%7u)", largest_block, largest_block);
