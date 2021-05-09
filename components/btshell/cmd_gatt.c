@@ -20,7 +20,7 @@
 #include <inttypes.h>
 #include <errno.h>
 
-#include "bsp/bsp.h"
+/* #include "bsp/bsp.h"  20210508 */
 #include "host/ble_hs_mbuf.h"
 #include "host/ble_gap.h"
 #include "services/gatt/ble_svc_gatt.h"
@@ -28,6 +28,9 @@
 #include "btshell.h"
 #include "cmd.h"
 #include "cmd_gatt.h"
+
+/* zoo 20210508 */
+#define bssnz_t
 
 #define CMD_BUF_SZ      256
 static bssnz_t uint8_t cmd_buf[CMD_BUF_SZ];

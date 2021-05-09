@@ -5,6 +5,8 @@ SRCS
   "misc.c"
   "parse.c"
   "cmd.c"
+  "cmd_gatt.c"
+  "cmd_l2cap.c"
 #  "cmd_btshell.c"
 #  "btshell.c"
 INCLUDE_DIRS

@@ -2589,7 +2589,6 @@ initialize_btshell()
 {
     int rc;
 
-#if 1
     /* Initialize some application specific memory pools. */
     rc = os_mempool_init(&btshell_svc_pool, BTSHELL_MAX_SVCS,
                          sizeof (struct btshell_svc), btshell_svc_mem,
@@ -2605,7 +2604,6 @@ initialize_btshell()
                          sizeof (struct btshell_dsc), btshell_dsc_mem,
                          "btshell_dsc_pool");
     assert(rc == 0);
-#endif
 
     ESP_ERROR_CHECK(esp_nimble_hci_and_controller_init());
 
@@ -2619,6 +2617,10 @@ initialize_btshell()
 
     rc = gatt_svr_init();
     assert(rc == 0);
+
+    cmd_init();
+
+    btshell_init_ext_adv_restart();
 
 }
 

@@ -21,8 +21,12 @@
 #include <inttypes.h>
 #include <errno.h>
 #include <string.h>
+#if MYNEWT
 #include "os/mynewt.h"
 #include "bsp/bsp.h"
+#else
+#include "os/os.h"
+#endif
 
 #include "nimble/ble.h"
 #include "nimble/nimble_opt.h"
@@ -36,7 +40,31 @@
 #include "../src/ble_hs_priv.h"
 
 #include "console/console.h"
+#if MYNEWT
 #include "shell/shell.h"
+#else
+#define MYNEWT_VAL_SHELL_CMD_HELP (1)
+typedef int (*shell_cmd_func_t)(int argc, char *argv[]);
+
+struct shell_param {
+    const char *param_name;
+    const char *help;
+};
+
+struct shell_cmd_help {
+    const char *summary;
+    const char *usage;
+    const struct shell_param *params;
+};
+
+struct shell_cmd {
+    uint8_t sc_ext : 1; /* 1 if this is an extended shell comand. */
+    shell_cmd_func_t sc_cmd_func;
+
+    const char *sc_cmd;
+    const struct shell_cmd_help *help;
+};
+#endif
 
 #include "cmd.h"
 #include "btshell.h"
@@ -44,6 +72,13 @@
 #include "cmd_l2cap.h"
 
 #define BTSHELL_MODULE "btshell"
+
+/* added 20210508 */
+#define bssnz_t
+
+#include "esp_console.h"
+#include "esp_log.h"
+static const char *TAG = "btshell_cmd";
 
 int
 cmd_parse_conn_start_end(uint16_t *out_conn, uint16_t *out_start,
@@ -1254,7 +1289,7 @@ cmd_scan(int argc, char **argv)
     if (extended == 0) {
         rc = btshell_scan(own_addr_type, duration_ms, &params, &g_scan_opts);
         if (rc != 0) {
-            console_printf("error scanning; rc=%d\n", rc);
+            console_printf("error scanning; rc=0x%02x\n", rc);
             return rc;
         }
 
@@ -4156,6 +4191,9 @@ static const struct shell_cmd_help sync_stats_help = {
 #endif
 #endif
 
+
+
+
 static const struct shell_cmd btshell_commands[] = {
 #if MYNEWT_VAL(BLE_EXT_ADV)
     {
@@ -4657,9 +4695,103 @@ static const struct shell_cmd btshell_commands[] = {
 };
 
 
+static int
+cmd_hint(int argc, char **argv)
+{
+    if (argc == 2) {
+        const char *cmd = argv[1];
+
+        const struct shell_cmd *btshell_cmd = &btshell_commands[0];
+        while (btshell_cmd && btshell_cmd->sc_cmd_func) {
+
+            if (strcmp(cmd, btshell_cmd->sc_cmd) != 0) {
+                btshell_cmd++;
+                continue;
+            }
+
+            // we've found the right command
+            if (btshell_cmd->help) {
+                if (btshell_cmd->help->summary || btshell_cmd->help->usage) {
+                    console_printf("%s\n", btshell_cmd->sc_cmd);
+
+                    if (btshell_cmd->help->summary) {
+                        console_printf("    %s\n", btshell_cmd->help->summary);
+                    }
+                    if (btshell_cmd->help->usage) {
+                        console_printf("    %s\n", btshell_cmd->help->usage);
+                    }
+                    console_printf("\n");
+                }
+
+                size_t param_width = 0;
+                const struct shell_param *param = btshell_cmd->help->params;
+                while (param && param->param_name) {
+                    size_t len = strlen(param->param_name);
+                    if (len > param_width) {
+                        param_width = len;
+                    }
+                    param++;
+                }
+
+                if (param_width > 0) {
+                    param = btshell_cmd->help->params;
+                    while (param && param->param_name) {
+                        if (param->param_name && param->help) {
+                            console_printf("    %-*s    %s\n",
+                                           param_width,
+                                           param->param_name,
+                                           param->help);
+                        }
+                        param++;
+                    }
+                }
+                return 0;
+            }
+        }
+        console_printf("no usage found for %s\n", cmd);
+    }
+    else {
+        console_printf("usage: hint command\n");
+    }
+    return 0;
+}
+
+
+static void
+register_bt_commands_for_esp()
+{
+    const struct shell_cmd *btshell_cmd = &btshell_commands[0];
+    while (btshell_cmd && btshell_cmd->sc_cmd_func) {
+
+        esp_console_cmd_t cmd = {
+            .command = btshell_cmd->sc_cmd,
+            .func    = btshell_cmd->sc_cmd_func,
+            .hint    = NULL,
+            .help    = (btshell_cmd->help) ? (btshell_cmd->help->summary) : NULL
+        };
+
+        ESP_ERROR_CHECK( esp_console_cmd_register(&cmd) );
+
+        btshell_cmd++;
+    }
+
+    esp_console_cmd_t cmd = {
+        .command = "hint",
+        .func    = cmd_hint,
+        .hint    = NULL,
+        .help    = "show argument hints for the btshell command"
+    };
+    ESP_ERROR_CHECK( esp_console_cmd_register(&cmd) );
+}
+
 void
 cmd_init(void)
 {
+#if 0
     shell_register(BTSHELL_MODULE, btshell_commands);
     shell_register_default_module(BTSHELL_MODULE);
+#else
+    register_bt_commands_for_esp();
+    ESP_LOGI(TAG, "btshell commands initialized");
+#endif
 }
