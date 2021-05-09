@@ -49,6 +49,8 @@
 #include "host/ble_sm.h"
 #include "host/util/util.h"
 
+#include "esp_log.h"
+static const char *TAG = "btshell-main";
 #include "esp_nimble_hci.h"
 
 /* Mandatory services. */
@@ -2583,6 +2585,16 @@ btshell_init_ext_adv_restart(void)
 }
 
 
+void ble_host_task(void *param)
+{
+    ESP_LOGI(TAG, "BLE Host Task Started");
+    /* This function will return only when nimble_port_stop() is executed */
+    nimble_port_run();
+
+    nimble_port_freertos_deinit();
+}
+
+
 /* added 20210503 */
 void
 initialize_btshell()
@@ -2618,9 +2630,12 @@ initialize_btshell()
     rc = gatt_svr_init();
     assert(rc == 0);
 
+    nimble_port_freertos_init(ble_host_task);
+
     cmd_init();
 
     btshell_init_ext_adv_restart();
+
 
 }
 
